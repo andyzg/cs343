@@ -1,0 +1,23 @@
+  time ./longjmp 11 120 14 14
+  user   0m11.601s
+
+  time ./a.out 11 120 14 14
+  user   0m46.700s
+
+With optimizations:
+  time ./longjmp 11 120 14 14
+  user   0m11.149s
+
+  time ./a.out 11 120 14 14
+  user   0m49.967s
+
+Observations:
+  With optimizations, longjmp becomes faster but a.out becomes slower.
+
+Speculations:
+  Longjmp is faster and try catch is slower with optimizations. I suspect that
+  longjmp becomes faster because it becomes more efficient with handling memory
+  since the code is more explicit with what actions are to be taken.  For
+  example, not allocating memory if not necessary. As for the
+  try catch, it becomes less efficient, where it tries to optimize how jmp_buf
+  is handled but may cause a slower runtime as a result.
