@@ -1,0 +1,4 @@
+When the program is compiled, the function cannot be dynamically defined. By
+passing routine pointers to handlers or global variables, the behaviour of the
+function can change during runtime. Instead, if we use functors, the behaviour
+will always be deterministic since we know the type of the functor's class.

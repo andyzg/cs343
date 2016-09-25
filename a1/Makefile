@@ -11,10 +11,10 @@ EXEC1 = longjmp				# 1st executable name
 OBJECTS02 = q2resumption.o		# optional build of given program
 EXEC02 = resumption
 
-OBJECTS2 = # object files forming 2nd executable with prefix "q2"
+OBJECTS2 = q2noresumption.o # object files forming 2nd executable with prefix "q2"
 EXEC2 = noresumption			# 2nd executable name
 
-OBJECTS3 = # object files forming 3rd executable with prefix "q3"
+OBJECTS3 =  # object files forming 3rd executable with prefix "q3"
 EXEC3 = floatconstant			# 3rd executable name
 
 OBJECTS = ${OBJECTS1} ${OBJECTS2} ${OBJECTS3}
