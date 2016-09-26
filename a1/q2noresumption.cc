@@ -19,8 +19,10 @@ class FHandlerFunctor : public HandlerFunctor {
     void operator() (int &i) {
       cout << "f handler " << i << endl;
       i -= 1;
-      HandlerFunctor* functor = new FHandlerFunctor();
-      f(i, functor);
+      if ( 0 < i ) {
+        HandlerFunctor* functor = new FHandlerFunctor();
+        f(i, functor);
+      }
     }
 };
 
@@ -33,11 +35,14 @@ class RootFunctor : public HandlerFunctor {
 
 void f( int &i, HandlerFunctor* functor ) {
     cout << "f " << i << endl;
-    if ( rand() % 5 == 0 ) (*functor)( i );
+    if ( rand() % 5 == 0 ) {
+      (*functor)( i );
+      return;
+    }
     i -= 1;
     if ( 0 < i ) {
-      HandlerFunctor* functor = new FHandlerFunctor();
-      f( i, functor );
+      HandlerFunctor* newFunctor = new FHandlerFunctor();
+      f( i, newFunctor );
     }
 }
 
