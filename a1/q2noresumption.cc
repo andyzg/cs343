@@ -14,18 +14,6 @@ class HandlerFunctor {
     virtual void operator() (int &i) {}
 };
 
-class FHandlerFunctor : public HandlerFunctor {
-  public:
-    void operator() (int &i) {
-      cout << "f handler " << i << endl;
-      i -= 1;
-      if ( 0 < i ) {
-        HandlerFunctor* functor = new FHandlerFunctor();
-        f(i, functor);
-      }
-    }
-};
-
 class RootFunctor : public HandlerFunctor {
   public:
     void operator() (int &i) {
@@ -33,11 +21,22 @@ class RootFunctor : public HandlerFunctor {
     }
 };
 
+class FHandlerFunctor : public HandlerFunctor {
+  public:
+    void operator() (int &i) {
+      cout << "f handler " << i << endl;
+      i -= 1;
+      if ( 0 < i ) {
+        HandlerFunctor* functor = new RootFunctor();
+        f(i, functor);
+      }
+    }
+};
+
 void f( int &i, HandlerFunctor* functor ) {
     cout << "f " << i << endl;
     if ( rand() % 5 == 0 ) {
       (*functor)( i );
-      return;
     }
     i -= 1;
     if ( 0 < i ) {

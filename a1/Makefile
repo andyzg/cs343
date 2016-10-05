@@ -14,7 +14,7 @@ EXEC02 = resumption
 OBJECTS2 = q2noresumption.o # object files forming 2nd executable with prefix "q2"
 EXEC2 = noresumption			# 2nd executable name
 
-OBJECTS3 =  # object files forming 3rd executable with prefix "q3"
+OBJECTS3 = q3.o # object files forming 3rd executable with prefix "q3"
 EXEC3 = floatconstant			# 3rd executable name
 
 OBJECTS = ${OBJECTS1} ${OBJECTS2} ${OBJECTS3}
