@@ -1,0 +1,48 @@
+Testing Documentation for Assignment 2 - Question 1
+
+1-2: Test input parsing
+2-5: Test sorting integers
+6: Test empty lines
+
+TEST 1
+Tests input parsing through stdin
+1  ./q1
+2  3 2 1 # user input
+3  3 2 1
+4  1 2 3
+
+TEST 2
+Tests input parsing through a file
+1  ./q1 q1input.txt
+2  2 1 4
+3  1 2 4
+4
+
+TEST 3
+Test basic sorting
+1  ./q1 q1input.txt
+2  3 2 1
+3  1 2 3
+4
+
+TEST 4
+Test basic sorting with repeated numbers
+1  ./q1 q1input.txt
+2  3 2 1 2
+3  1 2 2 3
+4
+
+TEST 5
+Test basic sorting with negative numbers
+1  ./q1 q1input.txt
+2  -5 0 -10 -20
+3  -20 -10 -5 0
+4
+
+TEST 6
+Test empty line
+1  ./q1 q1input.txt
+2  0
+3  0
+4
+
