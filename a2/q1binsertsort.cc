@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 
 #include "q1binsertsort.h"
 
@@ -50,35 +51,57 @@ void Binsertsort<T>::main() { // YOU WRITE THIS ROUTINE
 
 void uMain::main() {
   ifstream file_input;
-  if (argc == 2) {
+  ofstream file_output;
+  if (argc == 1) {
+    cout << "Usage: " << argv[0] << " unsorted-file [ sorted-file ]" << endl;
+    return;
+  }
+  if (argc >= 2) {
     file_input.open(argv[1]);
   }
-  istream& input = argc == 2 ? file_input : cin;
+  if (argc == 3) {
+    file_output.open(argv[2]);
+  }
+
+  istream& input = argc >= 2 ? file_input : cin;
+  ostream& output = argc == 3 ? file_output : cout;
 
 
   while (!input.eof()) {
-    Binsertsort<int> bs(SENTINEL);
+    Binsertsort<TYPE> bs(SENTINEL);
     string buffer;
     getline(input, buffer);
 
     if (buffer.empty()) {
       continue;
     }
-    cout << buffer << endl;
     istringstream iss(buffer);
-    int num;
-    while (iss >> num) {
-       bs.sort(num);
+    TYPE num;
+    int numItems;
+    iss >> numItems;
+    string toPrint = "";
+    for (int i = 0; i < numItems; i++) {
+      iss >> num;
+      toPrint = toPrint + to_string(num);
+      if (i != numItems - 1) {
+        toPrint = toPrint + " ";
+      }
+      bs.sort(num);
     }
+    output << toPrint << endl;
     bs.sort(SENTINEL);
 
-    int current = NULL;
+    TYPE current = NULL;
     while (current != SENTINEL) {
       current = bs.retrieve();
       if (current != SENTINEL) {
-        cout << current << " ";
+        output << current << " ";
       }
     }
-    cout << endl << endl;
+    output << endl << endl;
+  }
+
+  if (argc == 3) {
+    file_output.close();
   }
 }

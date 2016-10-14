@@ -1,0 +1,40 @@
+3a)
+With -multi flag
+shared:12469852
+shared:12467010
+shared:12107357
+shared:12389974
+shared:7898389
+shared:11367509
+shared:12244115
+shared:12079194
+shared:10074763
+shared:9822226
+
+Without -multi flag
+shared:13857900
+shared:13861382
+shared:20000000
+shared:16939740
+shared:13902312
+shared:16938265
+shared:16073751
+shared:16913701
+shared:16902897
+shared:16925353
+
+3b)
+No, they shouldn't be creating the same results. There is a chance for a
+variable to be overwritten because an increment is a sequential operation. Both
+tasks can be running increment at the same time and as a result, overwrite each
+other's work.
+
+3c)
+The biggest value should be 20000000 and the smallest value should be 50000000.
+The biggest value occurs when no operation is overridden and the smallest value
+is when every operation is overridden.
+
+3d)
+The memory between multiple processors is farther away than the memory from the
+same processor. As a result, the chances of overwriting each other's operations
+is increased.

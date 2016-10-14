@@ -1,4 +1,7 @@
 #include <map>
+#include <iostream>
+
+using namespace std;
 
 class Potato {
     // YOU ADD MEMBERS HERE
@@ -15,16 +18,17 @@ class Potato {
 _Coroutine Umpire;
 
 _Coroutine Player {
-  public:
+    void main();
     Potato* potato;
-    typedef std::map<int, Player*> PlayerList; // container type of your choice
-  private:
     Umpire* umpire;
     unsigned int id;
+  public:
+    typedef std::map<int, Player*> PlayerList; // container type of your choice
+  private:
     const Player::PlayerList *players;
-    void main();
   public:
     Player( Umpire &umpire, unsigned int Id, Player::PlayerList &players )  {
+      this->potato = NULL;
       this->umpire = &umpire;
       this->id = Id;
       this->players = &players;

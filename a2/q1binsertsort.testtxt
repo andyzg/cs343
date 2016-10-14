@@ -1,15 +1,15 @@
 Testing Documentation for Assignment 2 - Question 1
 
-1-2: Test input parsing
+1: Test no file
+2: Test input parsing
 2-5: Test sorting integers
 6: Test empty lines
+7: Test output to a file
 
 TEST 1
-Tests input parsing through stdin
+Tests no input file
 1  ./q1
-2  3 2 1 # user input
-3  3 2 1
-4  1 2 3
+2  Usage: ./q1 unsorted-file [ sorted-file ]
 
 TEST 2
 Tests input parsing through a file
@@ -22,8 +22,7 @@ TEST 3
 Test basic sorting
 1  ./q1 q1input.txt
 2  3 2 1
-3  1 2 3
-4
+3  1 2 3 4
 
 TEST 4
 Test basic sorting with repeated numbers
@@ -42,7 +41,14 @@ Test basic sorting with negative numbers
 TEST 6
 Test empty line
 1  ./q1 q1input.txt
-2  0
-3  0
+2
+3
 4
 
+TEST 7
+Test output to a file
+1  ./q1 q1input.txt output.out
+2  cat output.out
+3  5 2 3 1
+4  1 2 3 5
+5
