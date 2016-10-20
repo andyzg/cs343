@@ -13,7 +13,7 @@ EXEC01 = staticexits				# 0th executable name
 OBJECTS1 = q1nostaticexits.o
 EXEC1 = nostaticexits				# 1st executable name
 
-OBJECTS2 = # object files forming 2nd executable with prefix "q2"
+OBJECTS2 = q2matrixmultiply.o # object files forming 2nd executable with prefix "q2"
 EXEC2 = matrixmultiply				# 2nd executable name
 
 OBJECTS3 = # object files forming 3rd executable with prefix "q3"
