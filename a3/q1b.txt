@@ -1,0 +1,45 @@
+1b)
+Running this with args 150 150 150 150:
+
+Without compiler optimizations
+2.37u 0.00s 0:02.38
+2.37u 0.00s 0:02.38
+2.32u 0.01s 0:02.33
+2.34u 0.00s 0:02.35
+
+Static exits
+1.69u 0.00s 0:01.72
+1.70u 0.00s 0:01.70
+1.69u 0.00s 0:01.70
+1.69u 0.00s 0:01.70
+
+------------------------------
+
+With compiler optimizations
+No static exits:
+1.67u 0.00s 0:01.68
+1.67u 0.00s 0:01.68
+1.67u 0.00s 0:01.68
+1.67u 0.00s 0:01.68
+
+Static exits:
+0.48u 0.01s 0:00.51
+0.47u 0.00s 0:00.47
+0.48u 0.00s 0:00.48
+0.48u 0.00s 0:00.49
+
+---------------------------
+
+Relative differences between original and transformed:
+Without any dynamic exits, the program has to continue going through the loop,
+check the while condition several times before reaching the original EXIT
+location. Over many iterations, this leads to the transformed program doing many
+more iterations and having almost 40% slower speed without compiler
+optimizations.
+
+---------------------------
+
+Performance Difference with optimizations
+With optimizations, the original program performed almost 3.5x faster than the
+transformed program. The optimizations had a larger performance on the original
+program because it optimizes dynamic exits specifically.

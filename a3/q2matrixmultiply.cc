@@ -13,21 +13,20 @@ _Task T {
   unsigned int xs;
   unsigned int xe;
   unsigned int y;
-  unsigned int zs;
-  unsigned int ze;
+  unsigned int z;
 
   void main();
 public:
   T(int *X[], int *Y[], int *Z[],
              unsigned int xs, unsigned int xe,
              unsigned int y,
-             unsigned int zs, unsigned ze);
+             unsigned int z);
 };
 
 T::T(int *X[], int *Y[], int *Z[],
            unsigned int xs, unsigned int xe,
            unsigned int y,
-           unsigned int zs, unsigned ze) {
+           unsigned int z) {
   this->X = X;
   this->Y = Y;
   this->Z = Z;
@@ -35,36 +34,29 @@ T::T(int *X[], int *Y[], int *Z[],
   this->xs = xs;
   this->xe = xe;
   this->y = y;
-  this->zs = zs;
-  this->ze = ze;
+  this->z = z;
 }
 
 void T::main() {
-  if (xs != xe || zs != ze) {
-    // Split the range into two for x
-    if (xs != xe) {
-      T tbin1(X, Y, Z, xs, xe + (xs - xe)/2 + 1, y, zs, ze);
-      T tbin2(X, Y, Z, xe + (xs - xe)/2, xe, y, zs, ze);
-      return;
-    } else if (zs != ze) {
-      // Split the range into two for y
-      T tbin1(X, Y, Z, xs, xe, y, zs, ze + (zs - ze)/2 + 1);
-      T tbin2(X, Y, Z, xs, xe, y, ze + (zs - ze)/2, ze);
-      return;
-    }
+  if (xs != xe) {
+    T tbin1(X, Y, Z, xs, xe + (xs - xe)/2 + 1, y, z);
+    T tbin2(X, Y, Z, xe + (xs - xe)/2, xe, y, z);
+    return;
   }
 
-  int sum = 0;
-  for (unsigned int i = 0; i < y; i++) {
-    sum += X[xs][i] * Y[i][zs];
+  for (unsigned int i = 0; i < z; i++) {
+    int sum = 0;
+    for (unsigned int j = 0; j < y; j++) {
+      sum += X[xs][j] * Y[j][i];
+    }
+    Z[xs][i] = sum;
   }
-  Z[xs][zs] = sum;
 }
 
 
 
 void matrixmultiply( int *Z[], int *X[], unsigned int xr, unsigned int xc, int *Y[], unsigned int yc ) {
-  T tbin(X, Y, Z, xr-1, 0, xc, yc-1, 0);
+  T tbin(X, Y, Z, xr-1, 0, xc, yc);
 }
 
 string genFill( int num, char fill) {
@@ -164,6 +156,9 @@ void uMain::main() {
   int **y = new int*[b];
   int **z = new int*[a];
 
+  // Compiler optimizations
+  uProcessor p[a - 1] __attribute__(( unused ));
+
   string line;
   int num;
   for (int i = 0; i < a; i++) {
@@ -203,7 +198,9 @@ void uMain::main() {
   }
 
   matrixmultiply(z, x, a, b, y, c);
-  output(x, y, z, a, b, c);
+  if (!runWithoutFiles) {
+    output(x, y, z, a, b, c);
+  }
 
   for (int i = 0; i < a; i++) {
     free(x[i]);

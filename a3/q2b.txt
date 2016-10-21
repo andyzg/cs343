@@ -1,0 +1,32 @@
+Timing with 1 row
+real    0m1.227s
+user    0m1.146s
+sys     0m0.084s
+
+Timing with 2 rows
+real    0m1.709s
+user    0m2.589s
+sys     0m0.197s
+
+Timing with 4 rows
+real    0m1.822s
+user    0m5.711s
+sys     0m0.350s
+
+Timing with 8 rows
+real    0m2.135s
+user    0m13.546s
+sys     0m0.569s
+
+Timing with 16 rows
+real    0m2.905s
+user    0m33.396s
+sys     0m1.189s
+
+--------------------
+
+From this data, we can observe that the user time's growth is proportional to
+the number of rows defined. This makes sense because there is a proportional
+amount of tasks per row. The real time grows depending on the amount of rows but
+at a very slow state. This is because of the extra overhead of a larger binary
+tree of tasks.
