@@ -3,6 +3,170 @@
 using namespace std;
 
 // volatile prevents dead-code removal
+void do_work( int C1, int C2, int C3, int L1, int L2, volatile int L3 ) {
+  cout << L1 << " " << L2 << " " << L3 << " - " << C1 << " " << C2 << " " << C3 << endl;
+  for ( int i = 0; i < L1; i += 1 ) {
+    cout << "S1 i:" << i << endl;
+    for ( int j = 0; j < L2; j += 1 ) {
+      cout << "S2 i:" << i << " j:" << j << endl;
+      for ( int k = 0; k < L3; k += 1 ) {
+        cout << "S3 i:" << i << " j:" << j << " k:" << k << " : ";
+        if ( C1 ) goto EXIT1;
+        cout << "S4 i:" << i << " j:" << j << " k:" << k << " : ";
+        if ( C2 ) goto EXIT2;
+        cout << "S5 i:" << i << " j:" << j << " k:" << k << " : ";
+        if ( C3 ) goto EXIT3;
+        cout << "S6 i:" << i << " j:" << j << " k:" << k << " : ";
+      } // for
+      EXIT3:;
+      cout << "S7 i:" << i << " j:" << j << endl;
+    } // for
+    EXIT2:;
+    cout << "S8 i:" << i << endl;
+  } // for
+  EXIT1:;
+} // do_work
+
+// volatile prevents dead-code removal
+void do_work3( int C1, int C2, int C3, int L1, int L2, volatile int L3 ) {
+  cout << L1 << " " << L2 << " " << L3 << " - " << C1 << " " << C2 << " " << C3 << endl;
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  int level = 4;
+  int J1 = 0;
+  int J2 = 0;
+  int J3 = 0;
+
+  J1 = 0;
+  while ( (J1 | i) < L1 ) {
+    cout << "S1 i:" << i << endl;
+    J2 = 0;
+    j = 0;
+    while ( (J2 | j) < L2 ) {
+      cout << "S2 i:" << i << " j:" << j << endl;
+      J3 = 0;
+      k = 0;
+      while ( (J3 | k) < L3 ) {
+        level = 4;
+        cout << "S3 i:" << i << " j:" << j << " k:" << k << " : ";
+        if ( C1 ) {
+          level = 1;
+          J1 = L1;
+          J2 = L2;
+          J3 = L3;
+          // goto EXIT1;
+        } else {
+          cout << "S4 i:" << i << " j:" << j << " k:" << k << " : ";
+          if ( C2 ) {
+            level = 2;
+            J2 = L2;
+            J3 = L3;
+            // goto EXIT2;
+          } else {
+            cout << "S5 i:" << i << " j:" << j << " k:" << k << " : ";
+            if ( C3 ) {
+              level = 3;
+              J3 = L3;
+              // goto EXIT3;
+            } else {
+              cout << "S6 i:" << i << " j:" << j << " k:" << k << " : ";
+              k++;
+            }
+          }
+        }
+      }
+      if (level >= 3) { // Disable for 1 and 2
+        // EXIT3:;
+        cout << "S7 i:" << i << " j:" << j << endl;
+        j++;
+      }
+    }
+    if (level >= 2) { // Disable for 1
+      // EXIT2:;
+      cout << "S8 i:" << i << endl;
+      i++;
+    }
+  }
+  // EXIT1:;
+}
+
+// volatile prevents dead-code removal
+void do_work2( int C1, int C2, int C3, int L1, int L2, volatile int L3 ) {
+  cout << L1 << " " << L2 << " " << L3 << " - " << C1 << " " << C2 << " " << C3 << endl;
+  int flag1 = L1 == 0 ? 0 : 1;
+  int flag2 = L2 == 0 ? 0 : 1;
+  int flag3 = L3 == 0 ? 0 : 1;
+  int exitNum = 0;
+
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  while (flag1) {
+    flag2 = 1;
+    cout << "S1 i:" << i << endl;
+    while (flag2) {
+      flag3 = 1;
+      cout << "S2 i:" << i << " j:" << j << endl;
+      while (flag3) {
+        exitNum = 0;
+        cout << "S3 i:" << i << " j:" << j << " k:" << k << " : ";
+
+        if ( !C1 ) {
+          cout << "S4 i:" << i << " j:" << j << " k:" << k << " : ";
+
+          if ( !C2 ) {
+            cout << "S5 i:" << i << " j:" << j << " k:" << k << " : ";
+
+            if ( !C3 ) {
+              cout << "S6 i:" << i << " j:" << j << " k:" << k << " : ";
+            } else {
+              flag3 = 0;
+              exitNum = 3;
+            }
+
+          } else {
+            flag2 = 0;
+            flag3 = 0;
+            exitNum = 2;
+          }
+
+        } else {
+          flag1 = 0;
+          flag2 = 0;
+          flag3 = 0;
+          exitNum = 1;
+        }
+
+        if (++k >= L3-1) {
+          flag3 = 0;
+        }
+
+      }
+
+      if (exitNum >= 3) {
+        cout << "S7 i:" << i << " j:" << j << endl;
+        exitNum--;
+      }
+      if (++j >= L2-1) {
+        flag2 = 0;
+      }
+
+    }
+    if (exitNum >= 2) {
+      cout << "S8 i:" << i << endl;
+    }
+
+    if (++i >= L1-1) {
+      flag1 = 0;
+    }
+  }
+}
+
+
+// volatile prevents dead-code removal
 void do_work1( int C1, int C2, int C3, int L1, int L2, volatile int L3 ) {
     bool l1Flag = true;
     bool l2Flag = true;
@@ -18,37 +182,37 @@ void do_work1( int C1, int C2, int C3, int L1, int L2, volatile int L3 ) {
             l3Flag = true;
             k = 0;
             while ( l3Flag ) {
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                 cout << "S1 i:" << i << endl;
 #endif
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                 cout << "S2 i:" << i << " j:" << j << endl;
 #endif
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                 cout << "S3 i:" << i << " j:" << j << " k:" << k << " : ";
 #endif
                 if ( !C1 ) {
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                     cout << "S4 i:" << i << " j:" << j << " k:" << k << " : ";
 #endif
                     if ( !C2 ) {
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                         cout << "S5 i:" << i << " j:" << j << " k:" << k << " : ";
 #endif
                         if ( !C3 ) {
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                             cout << "S6 i:" << i << " j:" << j << " k:" << k << " : ";
 #endif
                         } else {
                           l3Flag = false;
                         }
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                         cout << "S7 i:" << i << " j:" << j << endl;
 #endif
                     } else {
                         l2Flag = false;
                     }
-#ifdef NOOUTPUT
+#ifndef NOOUTPUT
                     cout << "S8 i:" << i << endl;
 #endif
                 } else {
@@ -87,7 +251,7 @@ int main( int argc, char *argv[] ) {
         for ( int C1 = 0; C1 < 2; C1 += 1 ) {
             for ( int C2 = 0; C2 < 2; C2 += 1 ) {
                 for ( int C3 = 0; C3 < 2; C3 += 1 ) {
-                    do_work( C1, C2, C3, L1, L2, L3 );
+                    do_work3( C1, C2, C3, L1, L2, L3 );
                     cout << endl;
                 } // for
             } // for
