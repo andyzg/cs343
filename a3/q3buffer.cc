@@ -91,7 +91,7 @@ Consumer::Consumer( BoundedBuffer<int> &buffer,
 }
 
 void Producer::main() {
-  for (int i = 0; i <= produce; i++) {
+  for (int i = 1; i <= produce; i++) {
     yield(MPRNG()(delay-1));
     buffer->insert(i);
   }
