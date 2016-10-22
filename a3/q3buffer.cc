@@ -29,18 +29,39 @@ void BoundedBuffer<T>::insert( T elem ) {
   if (buffer.size() == size) {
     insertLock.wait(owner);
   }
-  cout << "HEY" << endl;
   buffer.push(elem);
+  taskLock.signal();
   signalFlag = true;
   removeLock.signal();
   owner.release();
   signalFlag = false;
-  taskLock.signal();
 #endif
 }
 
 template<typename T>
 T BoundedBuffer<T>::remove() {
+#ifdef NOBUSY
+  owner.acquire();
+  if (signalFlag) {
+    taskLock.wait(owner);
+  }
+  if (buffer.size() == 0) {
+    removeLock.wait(owner);
+  }
+  T val = buffer.front();
+  if (!buffer.size() == 0) {
+    buffer.pop();
+  } else {
+    val = 0;
+  }
+  taskLock.signal();
+  signalFlag = true;
+  insertLock.signal();
+  owner.release();
+  signalFlag = false;
+  return val;
+#endif
+
 #ifdef BUSY
   owner.acquire();
   while (buffer.size() == 0) {
@@ -52,27 +73,6 @@ T BoundedBuffer<T>::remove() {
   insertLock.signal();
   owner.release();
   signalFlag = false;
-  return val;
-#endif
-
-#ifdef NOBUSY
-  owner.acquire();
-  if (signalFlag) {
-    cout << "the fuck" << endl;
-    taskLock.wait(owner);
-  }
-  cout << "cool" << endl;
-  if (buffer.size() == 0) {
-    removeLock.wait(owner);
-  }
-  cout << "NOW" << endl;
-  T val = buffer.front();
-  buffer.pop();
-  signalFlag = true;
-  insertLock.signal();
-  owner.release();
-  signalFlag = false;
-  taskLock.signal();
   return val;
 #endif
 }
