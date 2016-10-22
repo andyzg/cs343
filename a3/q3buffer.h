@@ -1,9 +1,16 @@
 #include <vector>
+#include <queue>
 
 template<typename T> class BoundedBuffer {
   private:
     const unsigned int size;
-    std::vector<T> buffer;
+    std::queue<T> buffer;
+
+    uCondLock insertLock;
+    uCondLock removeLock;
+    uCondLock taskLock;
+    bool signalFlag;
+    uOwnerLock owner;
   public:
     BoundedBuffer( const unsigned int size = 10 );
     void insert( T elem );
@@ -13,7 +20,7 @@ template<typename T> class BoundedBuffer {
 _Task Producer {
     void main();
   private:
-    BoundedBuffer<int> buffer;
+    BoundedBuffer<int>* buffer;
     const int produce;
     const int delay;
   public:
@@ -24,10 +31,10 @@ _Task Producer {
 _Task Consumer {
     void main();
   private:
-    BoundedBuffer<int> buffer;
+    BoundedBuffer<int>* buffer;
     const int delay;
     const int sentinel;
-    int sum;
+    int *sum;
   public:
     Consumer( BoundedBuffer<int> &buffer, const int Delay, const int Sentinel, int &sum );
     Consumer() = delete;
