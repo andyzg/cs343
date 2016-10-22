@@ -5,14 +5,21 @@
 
 using namespace std;
 
+// Task class
 _Task T {
+
+  // Matrices
   int **X;
   int **Y;
   int **Z;
 
+  // Row ranges
   unsigned int xs;
   unsigned int xe;
+
+  // xcyr
   unsigned int y;
+  // yc
   unsigned int z;
 
   void main();
@@ -38,12 +45,14 @@ T::T(int *X[], int *Y[], int *Z[],
 }
 
 void T::main() {
+  // Make tasks until the range is on 1 number
   if (xs != xe) {
     T tbin1(X, Y, Z, xs, xe + (xs - xe)/2 + 1, y, z);
     T tbin2(X, Y, Z, xe + (xs - xe)/2, xe, y, z);
     return;
   }
 
+  // Calculate values for the row of Z at xs
   for (unsigned int i = 0; i < z; i++) {
     int sum = 0;
     for (unsigned int j = 0; j < y; j++) {
@@ -59,6 +68,7 @@ void matrixmultiply( int *Z[], int *X[], unsigned int xr, unsigned int xc, int *
   T tbin(X, Y, Z, xr-1, 0, xc, yc);
 }
 
+// Generate a string filled with a character "fill"
 string genFill( int num, char fill) {
   string space = "";
   for (int i = 0; i < num; i++) {
@@ -67,6 +77,7 @@ string genFill( int num, char fill) {
   return space;
 }
 
+// Print out the matrices X, Y and Z
 void output( int *x[], int *y[], int *z[], int a, int b, int c) {
   int leftSpacing = -1 + b * 9 + 4;
   string space = genFill(leftSpacing, ' ');
@@ -101,7 +112,6 @@ void output( int *x[], int *y[], int *z[], int a, int b, int c) {
 }
 
 void uMain::main() {
-  // TODO: Generate arrays with 37, and then multiply and end
   bool runWithoutFiles = false;
   if (argc == 4) {
     runWithoutFiles = true;
