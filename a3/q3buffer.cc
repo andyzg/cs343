@@ -30,11 +30,13 @@ void BoundedBuffer<T>::insert( T elem ) {
     insertLock.wait(owner);
   }
   buffer.push(elem);
-  taskLock.signal();
+
   signalFlag = true;
   removeLock.signal();
   owner.release();
+
   signalFlag = false;
+  taskLock.signal();
 #endif
 }
 
@@ -48,17 +50,22 @@ T BoundedBuffer<T>::remove() {
   if (buffer.size() == 0) {
     removeLock.wait(owner);
   }
+  cout << "R: " << buffer.size() << endl;
   T val = buffer.front();
   if (!buffer.size() == 0) {
     buffer.pop();
   } else {
     val = 0;
   }
-  taskLock.signal();
+
   signalFlag = true;
   insertLock.signal();
   owner.release();
+
   signalFlag = false;
+  taskLock.signal();
+
+
   return val;
 #endif
 
