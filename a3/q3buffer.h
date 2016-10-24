@@ -8,8 +8,12 @@ template<typename T> class BoundedBuffer {
 
     uCondLock insertLock;
     uCondLock removeLock;
-    uCondLock taskLock;
-    bool signalFlag;
+
+    uCondLock bargeInsertLock;
+    uCondLock bargeRemoveLock;
+
+    bool bargeInsertFlag;
+    bool bargeRemoveFlag;
     uOwnerLock owner;
   public:
     BoundedBuffer( const unsigned int size = 10 );

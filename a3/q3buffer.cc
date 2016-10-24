@@ -7,7 +7,7 @@
 using namespace std;
 
 template<typename T>
-BoundedBuffer<T>::BoundedBuffer( const unsigned int size ) : size(size), signalFlag(false) {}
+BoundedBuffer<T>::BoundedBuffer( const unsigned int size ) : size(size), bargeInsertFlag(false), bargeRemoveFlag(false) {}
 
 template<typename T>
 void BoundedBuffer<T>::insert( T elem ) {
@@ -23,20 +23,20 @@ void BoundedBuffer<T>::insert( T elem ) {
 
 #ifdef NOBUSY
   owner.acquire();
-  if (signalFlag) {
-    taskLock.wait(owner);
+  if (!insertLock.empty() || bargeInsertFlag) {
+    bargeInsertLock.wait(owner);
   }
   if (buffer.size() == size) {
+    bargeInsertFlag = true;
     insertLock.wait(owner);
+    bargeInsertFlag = false;
   }
   buffer.push(elem);
 
-  signalFlag = true;
+  bargeInsertLock.signal();
   removeLock.signal();
   owner.release();
 
-  signalFlag = false;
-  taskLock.signal();
 #endif
 }
 
@@ -44,27 +44,21 @@ template<typename T>
 T BoundedBuffer<T>::remove() {
 #ifdef NOBUSY
   owner.acquire();
-  if (signalFlag) {
-    taskLock.wait(owner);
+  if (!removeLock.empty() || bargeRemoveFlag) {
+    bargeRemoveLock.wait(owner);
   }
   if (buffer.size() == 0) {
+    bargeRemoveFlag = true;
     removeLock.wait(owner);
+    bargeRemoveFlag = false;
   }
-  cout << "R: " << buffer.size() << endl;
+
   T val = buffer.front();
-  if (!buffer.size() == 0) {
-    buffer.pop();
-  } else {
-    val = 0;
-  }
+  buffer.pop();
 
-  signalFlag = true;
   insertLock.signal();
+  bargeRemoveLock.signal();
   owner.release();
-
-  signalFlag = false;
-  taskLock.signal();
-
 
   return val;
 #endif
