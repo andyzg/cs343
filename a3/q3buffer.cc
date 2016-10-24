@@ -141,8 +141,8 @@ void uMain::main() {
     delay = cons + prods;
   }
 
-#ifdef     U MULTI
-  uProcessor p[3]     attribute     (( unused )); // create 3 kernel thread for a total of 4
+#ifdef   __U_MULTI__
+  uProcessor p[3]   __attribute__   (( unused )); // create 3 kernel thread for a total of 4
 #endif //     U MULTI
 
   int sum = 0;
