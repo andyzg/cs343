@@ -9,19 +9,42 @@ using namespace std;
 template<typename T>
 BoundedBuffer<T>::BoundedBuffer( const unsigned int size ) : size(size), bargeInsertFlag(false), bargeRemoveFlag(false) {}
 
+#ifdef BUSY
 template<typename T>
 void BoundedBuffer<T>::insert( T elem ) {
-#ifdef BUSY
   owner.acquire();
   while (buffer.size() == size) {
     insertLock.wait(owner);
   }
   buffer.push(elem);
   removeLock.signal();
+  if (buffer.size() < size) {
+    insertLock.signal();
+  }
   owner.release();
+}
+
+template<typename T>
+T BoundedBuffer<T>::remove() {
+  owner.acquire();
+  while (buffer.size() == 0) {
+    removeLock.wait(owner);
+  }
+  T val = buffer.front();
+  buffer.pop();
+
+  insertLock.signal();
+  if (buffer.size() > 0) {
+    removeLock.signal();
+  }
+  owner.release();
+  return val;
+}
 #endif
 
 #ifdef NOBUSY
+template<typename T>
+void BoundedBuffer<T>::insert( T elem ) {
   owner.acquire();
   if (!insertLock.empty() || bargeInsertFlag) {
     bargeInsertLock.wait(owner);
@@ -35,14 +58,14 @@ void BoundedBuffer<T>::insert( T elem ) {
 
   bargeInsertLock.signal();
   removeLock.signal();
+  if (buffer.size() < size) {
+    insertLock.signal();
+  }
   owner.release();
-
-#endif
 }
 
 template<typename T>
 T BoundedBuffer<T>::remove() {
-#ifdef NOBUSY
   owner.acquire();
   if (!removeLock.empty() || bargeRemoveFlag) {
     bargeRemoveLock.wait(owner);
@@ -57,26 +80,15 @@ T BoundedBuffer<T>::remove() {
   buffer.pop();
 
   insertLock.signal();
+  if (buffer.size() > 0) {
+    removeLock.signal();
+  }
   bargeRemoveLock.signal();
   owner.release();
 
   return val;
-#endif
-
-#ifdef BUSY
-  owner.acquire();
-  while (buffer.size() == 0) {
-    removeLock.wait(owner);
-  }
-  T val = buffer.front();
-  buffer.pop();
-  signalFlag = true;
-  insertLock.signal();
-  owner.release();
-  signalFlag = false;
-  return val;
-#endif
 }
+#endif
 
 Producer::Producer( BoundedBuffer<int> &buffer,
                     const int produce,
