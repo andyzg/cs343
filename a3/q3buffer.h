@@ -36,8 +36,8 @@ _Task Consumer {
     void main();
   private:
     BoundedBuffer<int>* buffer;
-    const int delay;
     const int sentinel;
+    const int delay;
     int *sum;
   public:
     Consumer( BoundedBuffer<int> &buffer, const int Delay, const int Sentinel, int &sum );
