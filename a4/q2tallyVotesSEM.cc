@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "MPRNG2.h"
+#include "MPRNG.h"
 #include "q2tallyVotes.h"
 
 using namespace std;
@@ -231,8 +231,8 @@ void Printer::print( unsigned int id, Voter::States state, TallyVotes::Tour vote
     // Store all new information to be flushed next
     votes[id] = vote;
     this->dirty[id] = true;
+    this->isDirty = true;
   }
-  this->isDirty = true;
 }
 
 void Printer::print( unsigned int id, Voter::States state, unsigned int numBlocked ) {

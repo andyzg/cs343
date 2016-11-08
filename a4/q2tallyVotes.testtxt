@@ -1,0 +1,131 @@
+Analysis for MC
+Input
+  ./vote 6 3
+
+Output
+Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+======= ======= ======= ======= ======= =======
+S                               S
+                                V s
+V p                             B 1
+B 2             S                       S
+                                        V s
+                        S       U 1     C
+U 0     S       b               C
+C                       V s
+                        B 1
+F s     ...     ...     ...     ...     ...
+...     ...     ...     ...     ...     F s
+                V p
+                B 2
+...     ...     ...     ...     F s     ...
+        V p
+        C               U 1
+                U 0     C
+                C
+...     ...     F p     ...     ...     ...
+...     F p     ...     ...     ...     ...
+...     ...     ...     F p     ...     ...
+
+=================
+All tours started
+
+Analysis
+  We test to make sure that all voters vote in groups of 3. New groups can only vote
+  once the previous group is done. If a voter tries to barge, they must wait until voting
+  is finished. The first g-1 voters are blocked until the g'th voter votes. That unblocks
+  the other g-1 voters.
+
+  Analysis of the first group:
+  Voter 0 and Voter 4 start. Voter 4 votes for Statue and gets blocked(1). Voter 0
+  votes for picture and then gets blocked(2). Voter 2 and 5 starts, but voter 5 goes
+  in first. Voter 2 tries to barge but is stopped. Voter 5 votes for Statue, and we
+  reach 3 people. The vote is complete, and Voter 0, 4 and 5 finish and go on the tour
+  Statue.
+
+Analysis for Semaphore
+Input
+  ./vote 6 3
+
+Output
+Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+======= ======= ======= ======= ======= =======
+        S
+        V s
+        B 1     S
+                V p
+                B 2     S       S
+S       U 1                     V p
+        C       U 0                     S
+                C
+...     F p     ...     ...     ...     ...
+                                C
+...     ...     F p     ...     ...     ...
+                        V s
+V p                     B 1
+B 2                                     V p
+...     ...     ...     ...     F p     ...
+                        U 1
+U 0                     C
+C
+...     ...     ...     F p     ...     ...
+                                        C
+F p     ...     ...     ...     ...     ...
+...     ...     ...     ...     ...     F p
+
+=================
+All tours started
+
+Analysis
+  We want to test for the same things as MC i.e. voters are blocked until there are
+  g voters. First g-1 voters are blocked and any other voters are blocked.
+
+  Analysis of first group:
+  Voter 1 starts. Voter 1 votes for Statue and then becomes blocked. Voter 2 starts and
+  votes for picture and is then blocked. Both Voter 3 and 4 start but Voter 4 stars first.
+  Since it's the g'th voter, it isn't blocked, and it then unblocks Voter 1 and 2. It voted for
+  Picture. As a result, Voter 1, 2 and 4 go on a tour with Picture.
+
+Analysis for Barrier
+Input
+  ./vote 6 3
+
+Output
+Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+======= ======= ======= ======= ======= =======
+                                        S
+                                        V s
+S               S       S               B 1
+                V p
+                B 2     V p
+                U 1     C
+                C
+...     ...     ...     F p     ...     ...
+                                        U 0
+                                        C
+...     ...     F p     ...     ...     ...
+V s     S
+B 1
+...     ...     ...     ...     ...     F p
+        V p
+        B 2                     S
+                                V p
+        U 1                     C
+        C
+...     ...     ...     ...     F p     ...
+U 0
+C
+...     F p     ...     ...     ...     ...
+F p     ...     ...     ...     ...     ...
+
+=================
+All tours started
+
+Analysis
+  Similar to the previous methods, the output should be similar. Again, it waits
+  for g voters before making a decision, and when complete, unblocks new voters.
+
+  Analysis of the first group.
+  Voter 5 starts, votes for Statue and gets blocked. Voter 2 and 3 start, but Voter 2
+  goes first. Voter 2 votes for Picture and gets blocked. Voter 3 then votes for Picture
+  and doesn't get blocked. Voter 2 and 5 get unblocked in the respective order.
