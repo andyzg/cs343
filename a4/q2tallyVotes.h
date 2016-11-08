@@ -17,8 +17,6 @@ class TallyVotes {
   uCondLock saveLock;
   bool isVoting = false;
 
-  unsigned int count = 0;
-
 #elif defined( IMPLTYPE_SEM )         // semaphore solution
 // includes for this kind of vote-tallier
 class TallyVotes {
@@ -27,7 +25,6 @@ class TallyVotes {
   uSemaphore voteSem;
   uSemaphore saveSem;
   uSemaphore endSem;
-  unsigned int count = 0;
 
   bool isVoting = false;
 
@@ -35,10 +32,12 @@ class TallyVotes {
 // includes for this kind of vote-tallier
 _Cormonitor TallyVotes : public uBarrier {
     // private declarations for this kind of vote-tallier
+    bool pictureGreater;
 #else
     #error unsupported voter type
 #endif
     // common declarations
+    unsigned int count = 0;
     unsigned int group;
     Printer* printer;
     unsigned int pcount;

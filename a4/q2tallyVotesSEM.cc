@@ -1,3 +1,5 @@
+#if defined( IMPLTYPE_SEM )
+
 #include <iostream>
 #include <iomanip>
 #include "MPRNG2.h"
@@ -7,6 +9,65 @@ using namespace std;
 
 static MPRNG r;
 
+
+TallyVotes::TallyVotes( unsigned int group, Printer &printer) : bargeSem(0), voteSem(1), saveSem(0), endSem(0), group(group), printer(&printer), pcount(0), scount(0) {}
+
+TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  // Put all potential barging tasks in bargeSem
+  if (pcount + scount >= group && isVoting) {
+    bargeSem.P();
+  }
+
+  // Vote for a type of tour
+  voteSem.P();
+  isVoting = true;
+  printer->print(id, Voter::States::Vote, ballot);
+  if (ballot == TallyVotes::Tour::Picture) {
+    pcount += 1;
+  } else {
+    scount += 1;
+  }
+
+  // Last task unlocks the next semaphore
+  bool unlocker = false;
+  if (pcount + scount == group) {
+    saveSem.V();
+    unlocker = true;
+  }
+  voteSem.V();
+
+  if (!unlocker) { // Blocked tasks
+    printer->print(id, Voter::States::Block, pcount + scount);
+  }
+  saveSem.P();
+
+  // Keep track of number of tasks.
+  count++;
+  // If not the last task, unlock another task.
+  if (!unlocker) {
+    printer->print(id, Voter::States::Unblock, group - count - 1);
+  }
+  printer->print(id, Voter::States::Complete);
+  bool pictureGreater = pcount > scount;
+
+  // In order to not have g+1 releases, only release if not last task.
+  if (!unlocker) {
+    saveSem.V();
+  }
+
+  // Reset all values before letting next tour group.
+  if (count == group) {
+    count = 0;
+    pcount = 0;
+    scount = 0;
+    isVoting = false;
+
+    // Release all barging tasks.
+    for (unsigned int i = 0; i < group && bargeSem.counter() < 0; i++) { bargeSem.V(); }
+  }
+
+  return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
+}
 
 
 Voter::Voter( unsigned int id, TallyVotes &voteTallier, Printer &printer ) :
@@ -218,3 +279,4 @@ void uMain::main() {
     delete voters[i];
   }
 }
+#endif

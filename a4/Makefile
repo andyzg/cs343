@@ -8,7 +8,7 @@ MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 OBJECTS01 = q1new.o				# optional build of given program
 EXEC01 = new
 
-OBJECTS2 = q2tallyVotes.o # list of object files for question 1 prefixed with "q2"
+OBJECTS2 = q2tallyVotesMC.o q2tallyVotesSEM.o q2tallyVotesBAR.o # list of object files for question 1 prefixed with "q2"
 EXEC2 = vote
 
 OBJECTS = ${OBJECTS2}				# all object files

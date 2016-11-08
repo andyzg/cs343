@@ -1,3 +1,5 @@
+#if defined( IMPLTYPE_BAR )
+
 #include <iostream>
 #include <iomanip>
 #include "MPRNG2.h"
@@ -7,6 +9,56 @@ using namespace std;
 
 static MPRNG r;
 
+
+// Constructor
+TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
+  uBarrier(group),
+  group(group),
+  printer(&printer),
+  pcount(0),
+  scount(0) {}
+
+TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  // Vote for tour
+  printer->print(id, Voter::States::Vote, ballot);
+  if (ballot == TallyVotes::Tour::Picture) {
+    pcount += 1;
+  } else {
+    scount += 1;
+  }
+
+  // Keep track of which task is blocked and which isn't
+  bool isBlocked = false;
+  if (pcount + scount < total()) {
+    isBlocked = true;
+    printer->print(id, Voter::States::Block, pcount + scount);
+  }
+
+  block();
+  // Keep track of how many tasks are unblocked
+  count++;
+  if (!isBlocked) {
+    printer->print(id, Voter::States::Unblock, group - count);
+  }
+
+  // Store the final result
+  printer->print(id, Voter::States::Complete);
+
+  return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
+}
+
+void TallyVotes::block() {
+  uBarrier::block();
+}
+
+void TallyVotes::last() {
+  // Reset all values after barrier has unblocked
+  pictureGreater = pcount > scount;
+  pcount = 0;
+  scount = 0;
+  count = 0;
+  resume();
+}
 
 
 Voter::Voter( unsigned int id, TallyVotes &voteTallier, Printer &printer ) :
@@ -218,3 +270,4 @@ void uMain::main() {
     delete voters[i];
   }
 }
+#endif

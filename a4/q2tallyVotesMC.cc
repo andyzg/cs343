@@ -1,3 +1,5 @@
+#if defined( IMPLTYPE_MC )
+
 #include <iostream>
 #include <iomanip>
 #include "MPRNG2.h"
@@ -7,6 +9,56 @@ using namespace std;
 
 static MPRNG r;
 
+TallyVotes::TallyVotes( unsigned int group, Printer &printer ) : group(group), printer(&printer), pcount(0), scount(0) {}
+
+TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  lock.acquire();
+  // Prevent any barging
+  if (isVoting && pcount + scount >= group) {
+    printer->print(id, Voter::States::Barging);
+    bargeLock.wait(lock);
+  }
+
+  // Vote for the type of tour
+  printer->print(id, Voter::States::Vote, ballot);
+  if (ballot == TallyVotes::Tour::Picture) {
+    pcount += 1;
+  } else {
+    scount += 1;
+  }
+
+  // Block all tasks until result is computed
+  if (pcount + scount < group) {
+    printer->print(id, Voter::States::Block, pcount + scount);
+    isVoting = true;
+    voteLock.wait(lock);
+    printer->print(id, Voter::States::Unblock, group - count - 1);
+  }
+
+  // Keep track of number of tasks that are complete
+  count++;
+  printer->print(id, Voter::States::Complete);
+  bool pictureGreater = pcount > scount;
+  voteLock.signal();
+  // Wait until all tasks are done until resetting the vote count
+  if (count < group) {
+    saveLock.wait(lock);
+  } else {
+    pcount = 0;
+    scount = 0;
+    count = 0;
+    // All tasks are done voting, unlock all tasks
+    saveLock.broadcast();
+  }
+  lock.release();
+
+  isVoting = false;
+  // G tasks signal G new tasks
+  if (!bargeLock.empty()) {
+    bargeLock.signal();
+  }
+  return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
+}
 
 
 Voter::Voter( unsigned int id, TallyVotes &voteTallier, Printer &printer ) :
@@ -218,3 +270,4 @@ void uMain::main() {
     delete voters[i];
   }
 }
+#endif
