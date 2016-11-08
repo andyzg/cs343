@@ -17,6 +17,10 @@
 7.70u 0.00s 0:01.93
 7.77u 0.00s 0:01.99
 
+The real time changes very little as the number of tasks increases. The user
+time grows proportionally to the number of tasks, because all operations are
+performed on the stack.
+
 
 10000000 times, DARRAY
 1 task
@@ -36,6 +40,10 @@
 165.58u 0.35s 0:43.00
 172.46u 0.50s 0:44.26
 163.54u 0.38s 0:41.93
+
+Both the user time and the real time grows in this case. This is because
+the operations are all performed on the heap instead of the stack. Both times
+also grows much faster depending on the number of tasks.
 
 
 10000000 times, VECTOR1
@@ -57,6 +65,11 @@
 166.64u 0.46s 0:43.09
 163.22u 0.21s 0:42.67
 
+Both times grows in this case.  This is because it needs to request and
+allocate memory in the heap as well as manage the memory internally in the
+vector.
+
+
 2000000, VECTOR2
 1 task
 2.73u 0.00s 0:02.73
@@ -76,3 +89,16 @@
 135.01u 0.20s 0:33.85
 137.62u 0.30s 0:34.63
 
+The user time and the real time grows again in this case.
+It requires to ask the allocator for more memory on the heap depending on
+the number of tasks.
+
+
+---
+
+The default version performs much faster because all of the memory lives on the
+stack. The DARRAY and VECTOR1 both require memory on the heap, and need to
+request for memory which slows down the process. However, they only need to
+request the amount of data once, whereas VECTOR2 needs to request memory from
+the heap multiple times as the vector dynamically grows since the amount of memory needed
+isn't explicitly declared.
