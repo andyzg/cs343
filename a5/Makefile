@@ -5,10 +5,7 @@ CXX = u++					# compiler
 CXXFLAGS = -g -multi -Wall -Wno-unused-label -MMD -O2 -DIMPLKIND_${KIND} -DIMPLTYPE_${TYPE}
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-OBJECTS01 = q1new.o				# optional build of given program
-EXEC01 = new
-
-OBJECTS2 = q2tallyVotes${TYPE}.o # list of object files for question 1 prefixed with "q2"
+OBJECTS2 = q3tallyVotes${TYPE}.o # list of object files for question 1 prefixed with "q3"
 EXEC2 = vote
 
 OBJECTS = ${OBJECTS2}				# all object files
@@ -22,9 +19,6 @@ EXECS = ${EXEC2}				# all executables
 all : ${EXECS}					# build all executables
 
 -include ImplKind
-
-q1new.o : q1new.cc				# add flags 1st executable, ADJUST SUFFIX (.cc)
-	${CXX} ${CXXFLAGS} -nodebug -c $< -o $@
 
 ifeq (${IMPLKIND},${KIND})			# same implementation type as last time ?
 ${EXEC01} : ${OBJECTS01}
@@ -66,7 +60,7 @@ else						# implementation type has changed
 .PHONY : ${EXEC2}
 ${EXEC2} :
 	rm -f ImplType
-	touch q2tallyVotes.h
+	touch q3tallyVotes.h
 	sleep 1
 	${MAKE} ${EXEC2} TYPE="${TYPE}"
 endif

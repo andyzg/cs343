@@ -1,0 +1,35 @@
+Running with default values
+
+Without PAD flag
+1:
+0x63ac78 0x63ac80 0x63ac88 0x63ac90
+100000000
+100000000
+0.64u 0.01s 0:00.65
+
+2:
+0x63ac78 0x63ac80 0x63ac88 0x63ac90
+100000000
+100000000
+0.65u 0.00s 0:00.65
+
+With PAD flag
+1:
+0x63ac80 0x63acc0 0x63ad00 0x63ad40
+100000000
+100000000
+0.65u 0.00s 0:00.66
+
+2:
+0x63ac80 0x63acc0 0x63ad00 0x63ad40
+100000000
+100000000
+0.65u 0.00s 0:00.65
+
+i) Despite one version having memory addresses aligned to multiples of 64 and
+not aligned, the timing results of both results are approximately the same.
+
+ii) They are in ascending order based on order of declaration.
+
+iii) The void* cast converts the pointer into a memory address. Without the
+cast, printing &pad1 simply outputs '1'.

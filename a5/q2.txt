@@ -1,0 +1,8 @@
+Deadlock is the state when one or more processes are waiting for an event that
+will not occur.
+
+In the case of this Dr Who scene, each Angel is being looked at by another
+Angel. In order for an Angel to move, it must not be looked at by another Angel.
+However, in order for an Angel to stop looking at another Angel, it needs to
+not be looked at. This results in two events dependent on each other to happen
+in order to occur.
