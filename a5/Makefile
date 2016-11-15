@@ -14,37 +14,6 @@ EXECS = ${EXEC2}				# all executables
 
 #############################################################
 
-.PHONY : all clean
-
-all : ${EXECS}					# build all executables
-
--include ImplKind
-
-ifeq (${IMPLKIND},${KIND})			# same implementation type as last time ?
-${EXEC01} : ${OBJECTS01}
-	${CXX} ${CXXFLAGS} -nodebug $^ -o $@
-else
-ifeq (${KIND},)					# no implementation type specified ?
-# set type to previous type
-KIND=${IMPLKIND}
-${EXEC01} : ${OBJECTS01}
-	${CXX} ${CXXFLAGS} -nodebug $^ -o $@
-else						# implementation type has changed
-.PHONY : ${EXEC01}
-${EXEC01} :
-	rm -f ImplKind
-	touch q1new.cc
-	sleep 1
-	${MAKE} ${EXEC01} KIND="${KIND}"
-endif
-endif
-
-ImplKind :
-	echo "IMPLKIND=${KIND}" > ImplKind
-	sleep 1
-
-#############################################################
-
 -include ImplType
 
 ifeq (${IMPLTYPE},${TYPE})			# same implementation type as last time ?
