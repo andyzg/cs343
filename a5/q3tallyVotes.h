@@ -3,22 +3,6 @@
 
 using namespace std;
 
-#if defined( IMPLTYPE_INTB )         // internal scheduling monitor solution with barging
-void TallyVotes::wait() {
-    bench.wait();                      // wait until signalled
-    while ( rand() % 5 == 0 ) {        // multiple bargers allowed
-        _Accept( vote ) {              // accept barging callers
-        } _Else {                      // do not wait if no callers
-        } // _Accept
-    } // while
-}
-
-void TallyVotes::signalAll() {
-    while ( ! bench.empty() ) bench.signal();
-    \(}\Tab{44}{\)// drain the condition
-}
-#endif
-
 _Cormonitor Printer;
 
 #if defined( IMPLTYPE_EXT )            // external scheduling monitor solution
@@ -35,6 +19,7 @@ _Monitor TallyVotes {
 _Monitor TallyVotes {
     // private declarations for this kind of vote-tallier
     uCondition bench;                  // only one condition variable (you may change the variable name)
+    bool isVoting;
     void wait();                       // barging version of wait
     void signalAll();                  // unblock all waiting tasks
 #elif defined( IMPLTYPE_AUTO )         // automatic-signal monitor solution
@@ -58,6 +43,21 @@ _Task TallyVotes {
     enum Tour { Picture, Statue };
     Tour vote( unsigned int id, Tour ballot );
 };
+
+#if defined( IMPLTYPE_INTB )         // internal scheduling monitor solution with barging
+void TallyVotes::wait() {
+    bench.wait();                      // wait until signalled
+    while ( rand() % 5 == 0 ) {        // multiple bargers allowed
+        _Accept( vote ) {              // accept barging callers
+        } _Else {                      // do not wait if no callers
+        } // _Accept
+    } // while
+}
+
+void TallyVotes::signalAll() {
+    while ( ! bench.empty() ) bench.signal(); // drain the condition
+}
+#endif
 
 /************** BEGIN VOTER *******/
 _Task Voter {
