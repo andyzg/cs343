@@ -25,9 +25,15 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
 
   if (pcount + scount < group) {
     printer->print(id, Voter::States::Block, pcount + scount);
-    _Accept(vote);
+    voters.wait();
     printer->print(id, Voter::States::Unblock, group - count - 1);
+    if (count < group - 1) {
+      voters.signal();
+    }
+  } else {
+    voters.signal();
   }
+
   count++;
   bool pictureGreater = pcount > scount;
   if (count == group) {

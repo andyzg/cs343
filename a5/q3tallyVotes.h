@@ -29,6 +29,7 @@ _Monitor TallyVotes {
 // includes for this kind of vote-tallier
 _Monitor TallyVotes {
     // private declarations for this kind of vote-tallier
+    uCondition voters;
 #elif defined( IMPLTYPE_INTB )         // internal scheduling monitor solution with barging
 // includes for this kind of vote-tallier
 _Monitor TallyVotes {
@@ -50,6 +51,7 @@ _Task TallyVotes {
     Printer* printer;
     int pcount;
     int scount;
+    int count;
     // common declarations
   public:                              // common interface
     TallyVotes( unsigned int group, Printer &printer );
