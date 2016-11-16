@@ -21,6 +21,7 @@ _Monitor TallyVotes {
     // private declarations for this kind of vote-tallier
     uCondition bench;                  // only one condition variable (you may change the variable name)
     bool isVoting;
+    int generation;
     void wait();                       // barging version of wait
     void signalAll();                  // unblock all waiting tasks
 #elif defined( IMPLTYPE_AUTO )         // automatic-signal monitor solution

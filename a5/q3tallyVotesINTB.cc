@@ -10,6 +10,7 @@ static MPRNG r;
 
 TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
   isVoting(false),
+  generation(0),
   group(group),
   printer(&printer),
   pcount(0),
@@ -17,9 +18,12 @@ TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
   count(0) {}
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  int myGen = generation;
   if (isVoting) {
     printer->print(id, Voter::States::Barging);
-    wait();
+    while (myGen == generation) {
+      wait();
+    }
   }
 
   if (ballot == TallyVotes::Tour::Picture) {
@@ -30,23 +34,26 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
   printer->print(id, Voter::States::Vote, ballot);
 
   if (pcount + scount < group) {
+    printer->print(id, Voter::States::Block, pcount + scount);
     wait();
+    printer->print(id, Voter::States::Unblock, group - count - 1);
   } else {
     isVoting = true;
     signalAll();
+    printer->print(id, Voter::States::Complete);
   }
 
   count++;
   bool pictureGreater = pcount > scount;
   if (count == group) {
     isVoting = false;
+    generation++;
     signalAll();
     pcount = 0;
     scount = 0;
     count = 0;
   }
 
-  printer->print(id, Voter::States::Complete);
   return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
 }
 
