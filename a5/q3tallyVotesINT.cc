@@ -16,6 +16,7 @@ TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
   count(0) {}
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  // Vote for statue or picture
   if (ballot == TallyVotes::Tour::Picture) {
     pcount++;
   } else {

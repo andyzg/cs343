@@ -39,11 +39,11 @@ _Task TallyVotes {
 #else
     #error unsupported voter type
 #endif
-    int group;
-    Printer* printer;
-    int pcount;
-    int scount;
-    int count;
+    int group; // group size
+    Printer* printer; // printer
+    int pcount; // picture count
+    int scount; // statue count
+    int count; // group count
     // common declarations
   public:                              // common interface
     TallyVotes( unsigned int group, Printer &printer );

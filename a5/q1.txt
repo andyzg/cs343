@@ -2,34 +2,38 @@ Running with default values
 
 Without PAD flag
 1:
-0x63ac78 0x63ac80 0x63ac88 0x63ac90
+0x62fc10 0x62fc08 0x62fc00 0x62fbf8
 100000000
 100000000
-0.64u 0.01s 0:00.65
+3.93u 0.00s 0:01.97
 
 2:
-0x63ac78 0x63ac80 0x63ac88 0x63ac90
+0x62fc10 0x62fc08 0x62fc00 0x62fbf8
 100000000
 100000000
-0.65u 0.00s 0:00.65
+3.77u 0.01s 0:01.91
 
 With PAD flag
 1:
-0x63ac80 0x63acc0 0x63ad00 0x63ad40
+0x62fcc0 0x62fc80 0x62fc40 0x62fc00
 100000000
 100000000
-0.65u 0.00s 0:00.66
+100000000
+0.63u 0.01s 0:00.32
 
 2:
-0x63ac80 0x63acc0 0x63ad00 0x63ad40
+0x62fcc0 0x62fc80 0x62fc40 0x62fc00
 100000000
 100000000
-0.65u 0.00s 0:00.65
+0.64u 0.00s 0:00.32
 
-i) Despite one version having memory addresses aligned to multiples of 64 and
-not aligned, the timing results of both results are approximately the same.
+i) When the memory addresses are multiples of 64, the timing is a lot faster
+than when the memory addresses aren't aligned to multiples of 64. This is
+because memory gets loaded in word sized chunks, and when the memory address is
+not aligned to a word size, then the computer has to read a few more byte chunks
+and some extra calculation before the data gets read.
 
-ii) They are in ascending order based on order of declaration.
+ii) They are in descending order based on order of declaration.
 
 iii) The void* cast converts the pointer into a memory address. Without the
 cast, printing &pad1 simply outputs '1'.

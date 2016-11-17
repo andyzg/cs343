@@ -17,6 +17,7 @@ TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
   count(0) {}
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  // Make a vote for either statue or picture
   if (ballot == TallyVotes::Tour::Picture) {
     pcount++;
   } else {
@@ -24,18 +25,24 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
   }
   printer->print(id, Voter::States::Vote, ballot);
 
-  WAITUNTIL(pcount + scount < group,,);
-  cout << endl;
+  // Wait until enough people have voted
+  WAITUNTIL(
+      pcount + scount < group,
+      printer->print(id, Voter::States::Block, pcount + scount),
+      printer->print(id, Voter::States::Unblock, group - count - 1));
 
   count++;
   bool pictureGreater = pcount > scount;
+  // Last person to reset the counters
   if (count == group) {
     pcount = 0;
     scount = 0;
     count = 0;
+  } else if (count == 1) {
+    // When the first person finishes voting
+    printer->print(id, Voter::States::Complete);
   }
 
-  printer->print(id, Voter::States::Complete);
   RETURN(pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue);
 }
 

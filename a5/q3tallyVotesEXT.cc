@@ -16,6 +16,7 @@ TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
   count(0) {}
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
+  // Vote for picture or statue
   if (ballot == TallyVotes::Tour::Picture) {
     pcount++;
   } else {
@@ -25,11 +26,15 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
 
   if (pcount + scount < group) {
     printer->print(id, Voter::States::Block, pcount + scount);
+    // Accept a vote call which accepts another vote call G-1 times.
     _Accept(vote);
     printer->print(id, Voter::States::Unblock, group - count - 1);
   }
+
   count++;
   bool pictureGreater = pcount > scount;
+  // When all voters have submitted their results, reset counters for a new
+  // group
   if (count == group) {
     pcount = 0;
     scount = 0;
