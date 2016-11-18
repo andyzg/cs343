@@ -1,6 +1,9 @@
 #include <iostream>
 #include <iomanip>
+
+#if defined( IMPLTYPE_AUTO )
 #include "AutomaticSignal.h"
+#endif
 
 using namespace std;
 
@@ -32,8 +35,8 @@ _Monitor TallyVotes {
 #elif defined( IMPLTYPE_TASK )         // internal/external scheduling task solution
 _Task TallyVotes {
   uCondition voters;
-  uCondition groupForming;
 
+  int id;
   void main();
     // private declarations for this kind of vote-tallier
 #else
@@ -49,6 +52,10 @@ _Task TallyVotes {
     TallyVotes( unsigned int group, Printer &printer );
     enum Tour { Picture, Statue };
     Tour vote( unsigned int id, Tour ballot );
+#if defined( IMPLTYPE_TASK )
+  private:
+    TallyVotes::Tour tourType;
+#endif
 };
 
 #if defined( IMPLTYPE_INTB )         // internal scheduling monitor solution with barging
@@ -139,7 +146,7 @@ Printer::Printer( unsigned int voters ) : voters(voters) {
 
 Printer::~Printer() {
   // Final printing
-  cout << endl << "=================" << endl;
+  cout << "=================" << endl;
   cout << "All tours started" << endl;
 
   // Free memory

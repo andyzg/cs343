@@ -29,6 +29,8 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
     // Accept a vote call which accepts another vote call G-1 times.
     _Accept(vote);
     printer->print(id, Voter::States::Unblock, group - count - 1);
+  } else {
+    printer->print(id, Voter::States::Complete);
   }
 
   count++;
@@ -41,7 +43,6 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
     count = 0;
   }
 
-  printer->print(id, Voter::States::Complete);
   return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
 }
 

@@ -19,13 +19,16 @@ TallyVotes::TallyVotes( unsigned int group, Printer &printer) :
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
   int myGen = generation;
+  // Prevent barging
   if (isVoting) {
     printer->print(id, Voter::States::Barging);
+    // In case if it randomly wakes up
     while (myGen == generation) {
       wait();
     }
   }
 
+  // Vote for picture or statue
   if (ballot == TallyVotes::Tour::Picture) {
     pcount++;
   } else {
@@ -34,10 +37,12 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
   printer->print(id, Voter::States::Vote, ballot);
 
   if (pcount + scount < group) {
+    // If not enough people, wait
     printer->print(id, Voter::States::Block, pcount + scount);
     wait();
     printer->print(id, Voter::States::Unblock, group - count - 1);
   } else {
+    // Prevent barging, wake everyone up
     isVoting = true;
     signalAll();
     printer->print(id, Voter::States::Complete);
@@ -45,6 +50,8 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
 
   count++;
   bool pictureGreater = pcount > scount;
+  // Last person to leave resets counters, disables flag and wakes up all voters
+  // waiting.
   if (count == group) {
     isVoting = false;
     generation++;

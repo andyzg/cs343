@@ -25,25 +25,27 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
   printer->print(id, Voter::States::Vote, ballot);
 
   if (pcount + scount < group) {
+    // Not enough people yet, wait
     printer->print(id, Voter::States::Block, pcount + scount);
     voters.wait();
     printer->print(id, Voter::States::Unblock, group - count - 1);
-    if (count < group - 1) {
+  } else {
+    // Wake everyone up
+    while (!voters.empty()) {
       voters.signal();
     }
-  } else {
-    voters.signal();
+    printer->print(id, Voter::States::Complete);
   }
 
   count++;
   bool pictureGreater = pcount > scount;
+  // Last person to complete needs to reset counters
   if (count == group) {
     pcount = 0;
     scount = 0;
     count = 0;
   }
 
-  printer->print(id, Voter::States::Complete);
   return pictureGreater ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
 }
 

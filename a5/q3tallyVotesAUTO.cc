@@ -27,7 +27,7 @@ TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
 
   // Wait until enough people have voted
   WAITUNTIL(
-      pcount + scount < group,
+      pcount + scount == group,
       printer->print(id, Voter::States::Block, pcount + scount),
       printer->print(id, Voter::States::Unblock, group - count - 1));
 

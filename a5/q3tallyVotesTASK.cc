@@ -22,37 +22,45 @@ void TallyVotes::main() {
     scount = 0;
     bool endLoop = false;
     for (int i = 0; i < group; i++) {
-      _Accept(vote) {
-      } or _Accept(~TallyVotes) {
+      // Accept votes or a destructor call to end the voting.
+      _Accept(~TallyVotes) {
+        // All voters are part of a group now, end.
         endLoop = true;
         break;
+      } or _Accept(vote) {
+        // Perform a vote, and then print out.
+        if (tourType== TallyVotes::Tour::Picture) {
+          pcount++;
+        } else {
+          scount++;
+        }
+        printer->print(id, Voter::States::Vote, tourType);
+        printer->print(id, Voter::States::Block, pcount + scount);
       };
     }
+
+    // Done voting
     if (endLoop) {
       break;
     }
 
+    printer->print(id, Voter::States::Complete);
     for (int i = 0; i < group; i++) {
-      voters.signal();
-      groupForming.wait();
+      count++;
+      // Give execution to voter, and then return execution here.
+      voters.signalBlock();
     }
   }
 }
 
 TallyVotes::Tour TallyVotes::vote(unsigned int id, TallyVotes::Tour ballot) {
-  if (ballot == TallyVotes::Tour::Picture) {
-    pcount++;
-  } else {
-    scount++;
-  }
-  printer->print(id, Voter::States::Vote, ballot);
-  printer->print(id, Voter::States::Block, pcount + scount);
+  // Transfer these variables back to void main() functions
+  tourType = ballot;
+  this->id = id;
   voters.wait();
-  printer->print(id, Voter::States::Unblock, group - count - 1);
-  count++;
 
-  printer->print(id, Voter::States::Complete);
-  groupForming.signal();
+  // Unblocked, return the final result
+  printer->print(id, Voter::States::Unblock, group - count);
   return pcount > scount ? TallyVotes::Tour::Picture : TallyVotes::Tour::Statue;
 }
 

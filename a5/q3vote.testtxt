@@ -1,0 +1,257 @@
+TEST DOCUMENTATION
+===========================
+The program starts V number of voters and form groups of G to proceed with
+either a picture or statue tour.
+
+OUTPUT TESTS
+==================
+  EXT
+  input:
+  1  ./vote
+
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3          S                               S
+  4                                          V p
+  5          V s                             B 1
+  6          B 2             S
+  7                          V s
+  8          U 1             C
+  9  ...     ...     ...     F s     ...     ...
+  10                                         U 0
+  11 ...     F s     ...     ...     ...     ...
+  12 ...     ...     ...     ...     ...     F s
+  13                                 S
+  14                                 V p
+  15 S                               B 1
+  16 V p
+  17 B 2             S
+  18                 V s
+  19 U 1             C
+  20 ...     ...     F p     ...     ...     ...
+  21                                 U 0
+  22 F p     ...     ...     ...     ...     ...
+  23 ...     ...     ...     ...     F p     ...
+  24 =================
+  25 All tours started
+
+  Analysis:
+    Voter 1 and 5 start on line 3.
+    Voter 5 votes for picture on line 4.
+    Voter 5 gets blocked on line 5. Voter 1 votes for statue on line 5.
+    Voter 1 gets blocked, totalling to 2 blocked. Voter 3 starts on line 6
+    Voter 3 votes for statue on line 7
+    Voting is completed by voter 3, voter 1 gets unblocked. Only 1 person is still blocked on line 8.
+    Voter 3 finishes, prints out ... on line 9.
+    Voter 5 gets unblocked, no more voters blocked on line 10.
+    Voter 1 finishes, prints out ... on line 11.
+    Voter 5 finishes, prints out ... on line 12.
+
+    There were 2 votes for statue and 1 vote for picture, so the final vote as shown
+    on line 9, 11, 12 is statue.
+
+  === END EXT ===
+
+  INT
+  input: ./vote
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3  S                       S
+  4                          V p
+  5  V s                     B 1
+  6  B 2             S
+  7                  V p
+  8  U 1             C
+  9  ...     ...     F p     ...     ...     ...
+  10                         U 0
+  11 F p     ...     ...     ...     ...     ...
+  12         S
+  13 ...     ...     ...     F p     ...     ...
+  14         V s
+  15         B 1                     S
+  16                                 V s
+  17                                 B 2     S
+  18                                         V s
+  19                                 U 1     C
+  20 ...     ...     ...     ...     ...     F s
+  21         U 0
+  22 ...     ...     ...     ...     F s     ...
+  23 ...     F s     ...     ...     ...     ...
+  24 =================
+  25 All tours started
+
+  Analysis:
+    Voter 0, 2 and 3 go first. The votes are s, p p respectively so p is the
+    majority. After voter 2 completes, the 3 voters print out 'F p' for each.
+    When they're done, voter 1, 4 and 5 go nxt. They vote for s, s and s. As
+    a result, final result is statue for 1, 4 and 5.
+
+    As seen from the output, the last person never gets blocked/unblocked(voter
+    2 and 5), the number of blocked people is always increasing and unblocked is
+    decreasing.
+
+  === END INT ===
+
+  INTB
+  input: ./vote
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3                                          S
+  4                                          V p
+  5                                  S       B 1
+  6                                  V p
+  7          S                       B 2
+  8          V s
+  9          C                       U 1
+  10 ...     F p     ...     ...     ...     ...
+  11                 S                       U 0
+  12 ...     ...     ...     ...     F p     ...
+  13                 V s
+  14                 B 1     S
+  15 ...     ...     ...     ...     ...     F p
+  16                         V s
+  17 S                       B 2
+  18 V s
+  19 C                       U 1
+  20 F s     ...     ...     ...     ...     ...
+  21                 U 0
+  22 ...     ...     ...     F s     ...     ...
+  23 ...     ...     F s     ...     ...     ...
+  24 =================
+  25 All tours started
+
+  Analysis:
+    First, voters 1, 4 and 5 vote for s, p and p respectively. Voter 5 gets
+    blocked first, then voter 4, and then voter 1 completes. The majority is
+    p, and then all 3 print out their results on line 10, 12 and 15.
+
+    Then voter 0, 2 and 3 start voting. They vote for s, s and s respectively.
+    The majority is s, so they go on the tour s.
+
+  input: ./vote
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3          S       S
+  4                  V p
+  5          V p     B 1
+  6          B 2             S       S
+  7                          V s
+  8          U 1             C               S
+  9  ...     ...     ...     F p     ...     ...
+  10 ...     F p     ...     ...     ...     ...
+  11                 U 0             b       b
+  12                                         V s
+  13                                         B 1
+  14 ...     ...     F p     ...     ...     ...
+  15                                 V p
+  16 S                               B 2
+  17 V s
+  18 C                               U 1
+  19 F s     ...     ...     ...     ...     ...
+  20                                         U 0
+  21 ...     ...     ...     ...     F s     ...
+  22 ...     ...     ...     ...     ...     F s
+  23 =================
+  24 All tours started
+
+  Analysis:
+    In this case, there is barging by voter 4 and 5. Barging only occurred after
+    voter 1, 2 and 3 completed their votes, not affecting the voting process of the
+    previous group.
+
+    Voter 1, 2 and 3 go first. They vote for p, p and s respectively. As a result, the
+    majority voted for p so the three of them go on a picture tour. And then voter 0, 4 and
+    5 start, and vote for s, p and s respectively. The majority voted for s so the three
+    of them go for the statue tour.
+
+  === END INTB ===
+
+  AUTO
+  input: ./vote
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3  S
+  4  V p
+  5  B 1                             S
+  6                                  V s
+  7          S                       B 2
+  8          V s
+  9          C                       U 1
+  10 ...     F s     ...     ...     ...     ...
+  11 U 0
+  12 ...     ...     ...     ...     F s     ...
+  13 F s     ...     ...     ...     ...     ...
+  14                 S                       S
+  15                 V p
+  16                 B 1                     V s
+  17                         S               B 2
+  18                         V s
+  19                         C               U 1
+  20 ...     ...     ...     F s     ...     ...
+  21                 U 0
+  22 ...     ...     ...     ...     ...     F s
+  23 ...     ...     F s     ...     ...     ...
+  24 =================
+  25 All tours started
+
+  Analysis:
+    Voter 0, 1 and 4 first starts. They vote for p, s and s respectively. As a
+    result, the final tour result is s. Voter 0 goes first and gets blocked. Voter
+    4 then goes next, and gets blocked. Voter 1 goes last, and then completes the
+    group. Voter 4 and 1 then get unblocked. The majority voted for s, so they go on
+    a statue tour.
+
+    Voter 2, 3 and 5 then start. Voter 2 votes for p, then gets blocked. Voter 5 then votes
+    for s, then gets blocked. Voter 3 then votes for s, and then completes the group,
+    unblocking voter 2 and 5. The majortiy voted for s, so they go on a statue tour.
+
+
+
+  === END TASK ===
+
+  TASK
+  input: ./vote
+  output:
+  1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
+  2  ======= ======= ======= ======= ======= =======
+  3                          S
+  4                          V s
+  5                          B 1     S
+  6                                  V p
+  7          S                       B 2     S
+  8                                          V p
+  9                                          B 3
+  10                         U 2             C
+  11 ...     ...     ...     F p     ...     ...
+  12                 S               U 1
+  13 ...     ...     ...     ...     F p     ...
+  14                                         U 0
+  15 ...     ...     ...     ...     ...     F p
+  16         V s
+  17 S       B 1     V p
+  18 V s             B 2
+  19 B 3
+  20 C       U 2
+  21 ...     F s     ...     ...     ...     ...
+  22                 U 1
+  23 ...     ...     F s     ...     ...     ...
+  24 U 0
+  25 F s     ...     ...     ...     ...     ...
+  26 =================
+  27 All tours started
+
+  Analysis:
+    Voter 3, 4 and 5 go first. They vote for s, p and p respectively.
+    Since all tasks get blocked, the output shows that the thre of them get blocked.
+    The last voter, 5, completes the group and then unblocks each task 3, 4 and 5.
+    The majority voted for p and so they go on a picture tour.
+
+    Voter 0, 1 and 2 then go next. They vote for s, s and p respectively. They each get
+    blocked until voter 0 gets blocked and then completes the group. That then unblocks the other groups.
+    The majority voted for s, so then they all go on a statue tour.
+
