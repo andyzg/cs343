@@ -83,15 +83,33 @@ void Voter::main() {
 
 void uMain::main() {
   int v = 6, g = 3, seed = getpid();
-  switch (argc) {
-    case 4:
-      seed = atoi(argv[3]);
-    case 3:
-      g = atoi(argv[2]);
-    case 2:
-      v = atoi(argv[1]);
-    default:
-      break;
+  try {
+    switch (argc) {
+      case 4:
+        for (unsigned int i = 0; i < strlen(argv[3]); i++) {
+          if (!isdigit(argv[3][i])) { throw 1; }
+        }
+        seed = atoi(argv[3]);
+      case 3:
+        for (unsigned int i = 0; i < strlen(argv[2]); i++) {
+          if (!isdigit(argv[2][i])) { throw 1; }
+        }
+        g = atoi(argv[2]);
+      case 2:
+        for (unsigned int i = 0; i < strlen(argv[1]); i++) {
+          if (!isdigit(argv[1][i])) { throw 1; }
+        }
+        v = atoi(argv[1]);
+      default:
+        break;
+    }
+
+    if (v % g != 0) {
+      throw 1;
+    }
+  } catch (int e) {
+    cout << "Usage: " << argv[0] << "  Voters (> 0 & V mod G = 0, default 6)  Group (> 0 & odd, default 3)  Seed (> 0)" << endl;
+    return;
   }
 
   // Initialize everything

@@ -3,9 +3,19 @@ TEST DOCUMENTATION
 The program starts V number of voters and form groups of G to proceed with
 either a picture or statue tour.
 
+Tests:
+1. EXT
+2. INT
+3. INTB Without barging
+4. INTB with barging
+5. AUTO
+6. TASK
+7. Evenly disible groups checks
+8. Integer checks
+
 OUTPUT TESTS
 ==================
-  EXT
+  1. EXT
   input:
   1  ./vote
 
@@ -53,7 +63,7 @@ OUTPUT TESTS
 
   === END EXT ===
 
-  INT
+  2. INT
   input: ./vote
   output:
   1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
@@ -94,7 +104,7 @@ OUTPUT TESTS
 
   === END INT ===
 
-  INTB
+  3. INTB No barging
   input: ./vote
   output:
   1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
@@ -131,6 +141,7 @@ OUTPUT TESTS
     Then voter 0, 2 and 3 start voting. They vote for s, s and s respectively.
     The majority is s, so they go on the tour s.
 
+  4. INTB With barging
   input: ./vote
   output:
   1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
@@ -170,7 +181,7 @@ OUTPUT TESTS
 
   === END INTB ===
 
-  AUTO
+  5. AUTO
   input: ./vote
   output:
   1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
@@ -214,7 +225,7 @@ OUTPUT TESTS
 
   === END TASK ===
 
-  TASK
+  6. TASK
   input: ./vote
   output:
   1  Voter0  Voter1  Voter2  Voter3  Voter4  Voter5
@@ -255,3 +266,19 @@ OUTPUT TESTS
     blocked until voter 0 gets blocked and then completes the group. That then unblocks the other groups.
     The majority voted for s, so then they all go on a statue tour.
 
+
+  7. Evenly divisible checks
+  input: ./vote 5 3
+  output
+  1  Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0 & odd, default 3)  Seed (> 0)
+
+  Analysis
+    Since 5 % 3 == 2, then it will not create evenly divisible groups. As a
+    result, it should not continue execution.
+
+  8. Integer checks
+  input: ./vote a
+  output:
+  1  Usage: ./vote  Voters (> 0 & V mod G = 0, default 6)  Group (> 0 & odd, default 3)  Seed (> 0)
+
+  Since the input is not an integer, the program should stop execution.
